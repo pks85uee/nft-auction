@@ -125,7 +125,7 @@ module.exports.enrollAdmin = async (orgName) => {
 		logger.info('Successfully enrolled admin user and imported it into the wallet');
 	} catch (error) {
 		console.error(`Failed to enroll admin user : ${error}`);
-		throw new Error('Failed to enroll admin user: ' + error.toString());
+		throw new Error('Failed to enroll admin user: ' + err.toString());
 	}
 };
 
@@ -194,9 +194,7 @@ module.exports.registerAndEnrollUser = async (username, secret, userOrg, isJson)
 		}
 	} catch (error) {
 		logger.error(`Failed to register user : ${error}`);
-		if (error.message.includes('Calling register endpoint failed') ||
-			error.message.includes('Calling enroll endpoint failed')
-		) {
+		if(error.message.includes('Calling register endpoint failed')){
 			throw new Error("Fabric CA is busy/unreachable. Try again later");
 		}
 		throw new Error(`Failed to register user : ${error}`);

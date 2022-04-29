@@ -47,11 +47,6 @@ class TransferArtwork extends Component {
 
   componentDidMount() {
     this.loadNftID(this.props.nftID);
-    $('#transferArtworkModal').on('hidden.bs.modal', function (event) {
-      if(document.getElementById("formTransferArtwork")) {
-        document.getElementById("formTransferArtwork").reset();
-      }
-    }); 
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -108,11 +103,8 @@ class TransferArtwork extends Component {
       $('#transferArtworkModal').modal('hide');
       toast.dismiss();
       toast.success(`Artwork transferred to ${this.state.transfereeUsername} successfully.`);
-      document.getElementById("formTransferArtwork").reset();
       
     }).catch(err => {
-      this.setState({ isLoading: false });
-      document.getElementById("formTransferArtwork").reset();
       toast.dismiss();
       toast.error(err);
     });
@@ -120,7 +112,7 @@ class TransferArtwork extends Component {
 
   renderContent() {
     return (
-      <form id="formTransferArtwork" onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit}>
         <div className="mb-3">
           <label htmlFor="reservePrice">Transfer to user</label>
           <input className="form-control" placeholder="Type username here" type="text" name="transfereeUsername" value={this.state.transfereeUsername} onChange={this.handleChange} required />
@@ -128,7 +120,7 @@ class TransferArtwork extends Component {
             Transfer this artwork to another user without payment.
           </div>
         </div>
-        <button type="submit" className="btn btn-primary mt-2" disabled={this.state.isLoading}>
+        <button type="submit" className="btn btn-primary mt-2">
           Transfer Artwork
           {this.state.isLoading && <SpinnerButton />}
         </button>

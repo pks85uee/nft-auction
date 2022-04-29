@@ -46,12 +46,6 @@ class NewArtwork extends Component {
     this.handleDatePicker = this.handleDatePicker.bind(this);
   }
 
-  componentDidMount() {
-    $('#newArtworkModal').on('hidden.bs.modal', function (event) {
-      document.getElementById("formNewArtWork").reset();
-    });        
-  }
-
   handleDatePicker(date) {
     let { selectedDate } = this.state;
     let artwork = { ...this.state.artwork };
@@ -63,15 +57,12 @@ class NewArtwork extends Component {
 
   }
 
+
   handleUploadFile(event) {
     let file = event.target.files[0];
     //validating
     let fileSize = parseFloat(file["size"] || 0) / (1024 * 1024); //in mb
-    if (!["image/jpeg", "image/png", "image/svg+xml"].includes(file.type)) {
-      event.target.setCustomValidity("Invalid image. Allowed image types are jpg, png and svg.");
-      event.target.reportValidity();
-    }
-    else if (fileSize > MAX_FILEUPLOAD_SIZE) {
+    if (fileSize > MAX_FILEUPLOAD_SIZE) {
       event.target.setCustomValidity("Max allowed size is " + MAX_FILEUPLOAD_SIZE + "MB.");
       event.target.reportValidity();
     } else {
@@ -100,33 +91,13 @@ class NewArtwork extends Component {
     this.setState({ isLoading: true });
     this.artwork.createArtwork(this.state.artwork).then((response) => {
       this.props.addArtwork(response);
-      document.getElementById("formNewArtWork").reset();
-      this.setState({ 
-        isLoading: false,
-        artwork: {
-          itemType: "Classical",
-          itemSubject: "Portrait",
-          itemMedia: "Oil",
-          itemDate: Moment(new Date()).format("MM/DD/yyyy"),
-          numberOfCopies: "1"
-        }, 
-      });
+      this.setState({ isLoading: false });
       $('#newArtworkModal').modal('hide');
+
       toast.dismiss();
       toast.success("Artwork submitted successfully");
 
     }).catch(err => {
-      document.getElementById("formNewArtWork").reset();
-      this.setState({ 
-        isLoading: false,
-        artwork: {
-          itemType: "Classical",
-          itemSubject: "Portrait",
-          itemMedia: "Oil",
-          itemDate: Moment(new Date()).format("MM/DD/yyyy"),
-          numberOfCopies: "1"
-        }, 
-      });
       toast.dismiss();
       toast.error(err);
     });
@@ -134,7 +105,7 @@ class NewArtwork extends Component {
 
   renderContent() {
     return (
-      <form id="formNewArtWork" onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit}>
         <div className="row">
           <div className="col-md-12 mb-3">
             <label htmlFor="firstName">Artwork Name</label>
@@ -211,7 +182,7 @@ class NewArtwork extends Component {
             <div className="form-group">
               <label htmlFor="exampleFormControlFile1">Upload Photo of Artwork</label>
               <input type="file" accept="image/*" className="form-control-file" onChange={this.handleUploadFile} required />
-              <span className="text-muted">Allowed image types are jpg, png and svg.<br />Max upload size {MAX_FILEUPLOAD_SIZE}MB.</span>
+              <span className="text-muted">Max upload size {MAX_FILEUPLOAD_SIZE}MB.</span>
             </div>
           </div>
           {/* <div className="col-md-6 mb-3">
@@ -220,7 +191,7 @@ class NewArtwork extends Component {
           </div> */}
         </div>
 
-        <button type="submit" className="btn btn-primary" disabled={this.state.isLoading} >
+        <button type="submit" className="btn btn-primary">
           Save and Add Artwork
           {this.state.isLoading && <SpinnerButton />}
         </button>

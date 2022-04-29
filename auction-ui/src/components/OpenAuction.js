@@ -29,12 +29,6 @@ class OpenAuction extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() {
-    $('#openAuctionModal').on('hidden.bs.modal', function (event) {
-      document.getElementById("formOpenAuction").reset();
-    });        
-  }
-
   handleChange(event) {
     const target = event.target;
     const value = target.value;
@@ -56,10 +50,8 @@ class OpenAuction extends Component {
       $('#openAuctionModal').modal('hide');
       toast.dismiss();
       toast.success("Auction started successfully.");
-      document.getElementById("formOpenAuction").reset();
+      
     }).catch(err => {
-      this.setState({ isLoading: false });
-      document.getElementById("formOpenAuction").reset();
       toast.dismiss();
       toast.error(err);
     });
@@ -69,13 +61,13 @@ class OpenAuction extends Component {
     return (
       <div className="row">
         <div className="col-md-12">
-          <form id="formOpenAuction" onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label htmlFor="duration">Duration (Minutes)</label>
               <input type="number" className="form-control" name="duration" onChange={this.handleChange} required />
               <small className="form-text text-muted">Enter the auction duration in minutes.</small>
             </div>
-            <button type="submit" className="btn btn-primary btn-block" disabled={this.state.isLoading}>
+            <button type="submit" className="btn btn-primary btn-block">
               Begin Auction
               {this.state.isLoading && <SpinnerButton />}
             </button>
